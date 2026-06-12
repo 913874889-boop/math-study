@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes, viewport-fit=cover">
+  <title>绝对值不等式 · 机械专业自主学习</title>
+  <style>
+    /* 所有样式保持不变，已确保微信内显示正常 */
+    :root {
+      --primary: #1a3c5e;
+      --primary-light: #1e5a8a;
+      --accent: #e8831a;
+      --accent-light: #f5a623;
+      --bg: #f5f6f8;
+      --card-bg: #ffffff;
+      --text: #2c3e50;
+      --text-light: #5a6c7d;
+      --border: #dde3ea;
+      --success: #27ae60;
+      --error: #e74c3c;
+      --info: #3498db;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow: 0 4px 16px rgba(0,0,0,0.08);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --font-math: 'Georgia', 'Times New Roman', 'STIX Two Math', serif;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    .header {
+      background: linear-gradient(135deg, #1a3c5e 0%, #1a4d75 30%, #1e5a8a 60%, #1a3c5e 100%);
+      color: #fff; padding: 0 16px; display: flex; align-items: center; justify-content: space-between;
+      height: 56px; position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 20px rgba(26,60,94,0.3); user-select: none;
+    }
+    .header .logo-area { display: flex; align-items: center; gap: 10px; }
+    .header .gear-icon {
+      width: 36px; height: 36px; animation: gear-spin 12s linear infinite;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+    @keyframes gear-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .header .title { font-size: 1rem; font-weight: 700; white-space: nowrap; }
+    .header .subtitle { font-size: 0.7rem; opacity: 0.85; display: none; }
+    .header .progress-mini {
+      display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.12);
+      padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; backdrop-filter: blur(10px);
+    }
+    .progress-bar-outer { width: 60px; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden; }
+    .progress-bar-inner { height: 100%; background: var(--accent-light); border-radius: 3px; transition: width 0.5s ease; }
+    .main-container { max-width: 1000px; margin: 0 auto; padding: 12px 12px 32px; display: flex; flex-direction: column; gap: 16px; }
+    .tab-nav {
+      display: flex; flex-wrap: wrap; gap: 4px; background: var(--card-bg); padding: 6px;
+      border-radius: var(--radius); box-shadow: var(--shadow-sm); position: sticky; top: 60px; z-index: 50;
+    }
+    .tab-btn {
+      flex: 1; min-width: 60px; padding: 8px 10px; border: none; background: transparent;
+      border-radius: var(--radius-sm); cursor: pointer; font-size: 0.8rem; font-weight: 500;
+      color: var(--text-light); transition: var(--transition); white-space: nowrap; font-family: inherit;
+      position: relative; touch-action: manipulation;
+    }
+    .tab-btn:hover { background: #eef3f8; color: var(--primary); }
+    .tab-btn.active { background: var(--primary); color: #fff; box-shadow: 0 2px 8px rgba(26,60,94,0.3); font-weight: 600; }
+    .tab-btn .tab-icon { display: block; font-size: 1rem; margin-bottom: 1px; }
+    .tab-btn.completed::after {
+      content: '✓'; position: absolute; top: 2px; right: 4px; font-size: 0.65rem;
+      color: var(--success); font-weight: bold; line-height: 1;
+    }
+    .tab-btn.active.completed::after { color: #a8e6cf; }
+    .content-card {
+      background: var(--card-bg); border-radius: var(--radius); padding: 20px 16px;
+      box-shadow: var(--shadow); transition: var(--transition); animation: fadeSlideIn 0.4s ease;
+    }
+    @keyframes fadeSlideIn { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
+    .content-card h2 { font-size: 1.3rem; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .content-card h2 .section-num {
+      display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px;
+      background: var(--accent); color: #fff; border-radius: 50%; font-size: 0.9rem; font-weight: 700;
+    }
+    .content-card h3 { font-size: 1.05rem; color: #3a4f63; margin: 16px 0 8px; padding-left: 12px; border-left: 4px solid var(--accent); }
+    .math-block {
+      background: #f8fafc; border: 1px solid #e8edf3; border-left: 4px solid var(--primary-light);
+      padding: 12px 16px; margin: 12px 0; border-radius: 6px; font-family: var(--font-math);
+      font-size: 1.1rem; text-align: center; letter-spacing: 0.5px;
+    }
+    .math-block.highlight { border-left-color: var(--accent); background: #fffdf7; }
+    .math-inline { font-family: var(--font-math); font-size: 1em; background: #f0f4f8; padding: 1px 6px; border-radius: 4px; }
+    .abs-bar {
+      display: inline-block; border-left: 2.5px solid #c0392b; border-right: 2.5px solid #c0392b;
+      padding: 1px 5px; margin: 0 2px; font-family: var(--font-math); border-radius: 2px; background: #fff5f5;
+    }
+    .info-box {
+      padding: 12px 14px; border-radius: var(--radius-sm); margin: 12px 0; font-size: 0.9rem;
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .svg-illustration { display: flex; justify-content: center; margin: 12px 0; background: #fafbfc; border-radius: var(--radius-sm); padding: 8px; overflow-x: auto; }
+    .practice-item {
+      background: #fafbfc; border-radius: var(--radius-sm); padding: 16px 14px; margin: 12px 0;
+      border: 1px solid var(--border);
+    }
+    .practice-item.correct { border-color: var(--success) !important; background: #f0faf4 !important; }
+    .practice-item.wrong { border-color: var(--error) !important; background: #fef5f5 !important; animation: shake 0.4s ease; }
+    @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 50%{transform:translateX(6px);} 75%{transform:translateX(-4px);} }
+    .options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .option-btn {
+      padding: 8px 14px; border: 2px solid var(--border); border-radius: 20px; background: #fff;
+      cursor: pointer; font-size: 0.85rem; transition: var(--transition); font-family: inherit;
+    }
+    .option-btn.selected { border-color: var(--primary); background: #dce9f5; font-weight: 600; }
+    .option-btn.correct-answer { border-color: var(--success) !important; background: #d5f5e3 !important; color: #1a6b3a !important; }
+    .option-btn.wrong-answer { border-color: var(--error) !important; background: #fadbd8 !important; color: #922b21 !important; }
+    .feedback-msg { margin-top: 6px; font-weight: 600; display: none; font-size: 0.9rem; }
+    .feedback-msg.show { display: block; }
+    .feedback-msg.correct { color: var(--success); }
+    .feedback-msg.wrong { color: var(--error); }
+    .input-answer {
+      padding: 8px 12px; border: 2px solid var(--border); border-radius: 20px; font-size: 1rem;
+      width: 140px; font-family: var(--font-math); outline: none;
+    }
+    .submit-btn {
+      padding: 8px 16px; background: var(--primary); color: #fff; border: none; border-radius: 20px;
+      cursor: pointer; font-weight: 600; font-family: inherit; margin-left: 6px; font-size: 0.9rem;
+    }
+    .submit-btn:disabled { opacity:0.5; cursor:not-allowed; }
+    .simulator-box { background: #f8fafc; border-radius: var(--radius); padding: 16px 18px; margin: 14px 0; border: 2px dashed #dde3ea; }
+    .slider-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; font-size: 0.9rem; }
+    .slider-group input[type=range] { width: 140px; accent-color: var(--accent); }
+    .slider-value { font-weight: 700; font-family: var(--font-math); color: var(--accent); }
+    .btn {
+      display: inline-flex; align-items: center; gap: 4px; padding: 8px 18px; border-radius: 20px;
+      font-weight: 600; cursor: pointer; transition: var(--transition); border: none; font-family: inherit;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-outline { background: #fff; color: var(--primary); border: 2px solid var(--primary); }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .score-summary { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin: 16px 0; }
+    .score-card { background: #fff; border-radius: var(--radius); padding: 16px 20px; text-align: center; box-shadow: var(--shadow-sm); }
+    .score-card .score-num { font-size: 2rem; font-weight: 700; color: var(--primary); }
+    .footer-note { text-align: center; font-size: 0.7rem; color: #aab5c0; margin-top: 16px; }
+    @media (min-width: 768px) {
+      .header { height: 64px; padding: 0 24px; }
+      .header .title { font-size: 1.2rem; }
+      .header .subtitle { display: block; }
+      .header .gear-icon { width: 42px; height: 42px; }
+      .tab-btn { font-size: 0.9rem; padding: 10px 14px; }
+      .content-card { padding: 28px 32px; }
+      .math-block { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+<header class="header">
+  <div class="logo-area">
+    <svg class="gear-icon" viewBox="0 0 48 48"><circle cx="24" cy="24" r="8" fill="#f5a623" stroke="#e8831a" stroke-width="2"/><g fill="#e8831a"><rect x="21" y="2" width="6" height="10" rx="3"/><rect x="21" y="36" width="6" height="10" rx="3"/><rect x="2" y="21" width="10" height="6" rx="3"/><rect x="36" y="21" width="10" height="6" rx="3"/><rect x="7" y="7" width="8" height="6" rx="3" transform="rotate(45 11 10)"/><rect x="33" y="7" width="8" height="6" rx="3" transform="rotate(-45 37 10)"/><rect x="7" y="35" width="8" height="6" rx="3" transform="rotate(-45 11 38)"/><rect x="33" y="35" width="8" height="6" rx="3" transform="rotate(45 37 38)"/></g></svg>
+    <div><div class="title">📐 绝对值不等式</div><div class="subtitle">机械专业 · 自主学习模块</div></div>
+  </div>
+  <div class="progress-mini"><span>📊</span><div class="progress-bar-outer"><div class="progress-bar-inner" id="globalProgressBar" style="width:0%"></div></div><span id="progressPercent">0%</span></div>
+</header>
+
+<div class="main-container">
+  <nav class="tab-nav" id="tabNav">
+    <button class="tab-btn active" data-tab="0"><span class="tab-icon">🎯</span>学习目标</button>
+    <button class="tab-btn" data-tab="1"><span class="tab-icon">📖</span>绝对值回顾</button>
+    <button class="tab-btn" data-tab="2"><span class="tab-icon">🔍</span>|x|&lt;a</button>
+    <button class="tab-btn" data-tab="3"><span class="tab-icon">🔎</span>|x|&gt;a</button>
+    <button class="tab-btn" data-tab="4"><span class="tab-icon">⚙️</span>机械应用</button>
+    <button class="tab-btn" data-tab="5"><span class="tab-icon">✏️</span>综合练习</button>
+    <button class="tab-btn" data-tab="6"><span class="tab-icon">🏆</span>自我测评</button>
+  </nav>
+  <div id="contentArea" class="content-card"></div>
+</div>
+<div class="footer-note">🏭 中职机械专业数学 · 绝对值不等式学习软件 | 微信适配版</div>
+
+<script>
+  (function() {
+    const state = {
+      currentTab: 0,
+      completedTabs: new Set(),
+      practiceScores: {},
+      quizSubmitted: false,
+    };
+    const tabNav = document.getElementById('tabNav');
+    const contentArea = document.getElementById('contentArea');
+    const globalProgressBar = document.getElementById('globalProgressBar');
+    const progressPercent = document.getElementById('progressPercent');
+    const allTabBtns = tabNav.querySelectorAll('.tab-btn');
+
+    function updateGlobalProgress() {
+      const pct = Math.round((state.completedTabs.size / 7) * 100);
+      globalProgressBar.style.width = pct + '%';
+      progressPercent.textContent = pct + '%';
+    }
+    function markTabCompleted(idx) {
+      if (state.completedTabs.has(idx)) return;
+      state.completedTabs.add(idx);
+      const btn = allTabBtns[idx];
+      if (btn) btn.classList.add('completed');
+      updateGlobalProgress();
+    }
+    function switchTab(idx) {
+      state.currentTab = idx;
+      allTabBtns.forEach(b => b.classList.remove('active'));
+      const target = allTabBtns[idx];
+      if (target) target.classList.add('active');
+      renderContent(idx);
+      contentArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (idx < 6) setTimeout(() => markTabCompleted(idx), 300);
+    }
+
+    function renderContent(idx) {
+      contentArea.style.animation = 'none';
+      contentArea.offsetHeight;
+      contentArea.style.animation = 'fadeSlideIn 0.4s ease';
+      switch (idx) {
+        case 0: renderTab0(); break;
+        case 1: renderTab1(); break;
+        case 2: renderTab2(); break;
+        case 3: renderTab3(); break;
+        case 4: renderTab4(); break;
+        case 5: renderTab5(); break;
+        case 6: renderTab6(); break;
+      }
+    }
+
+    function renderTab0() {
+      contentArea.innerHTML = '<h2><span class="section-num">🎯</span> 学习目标</h2><div class="info-box mechanical"><span class="info-icon">🔧</span><div>轴径设计50mm，公差±0.05mm，如何用<strong>绝对值不等式</strong>判断合格？</div></div><h3>📋 目标</h3><ul style="padding-left:20px;line-height:2;"><li>✅ 理解绝对值几何意义</li><li>✅ 掌握 |x| &lt; a 和 |x| &gt; a 型不等式的解法</li><li>✅ 掌握 |x - b| &lt; a 型不等式的解法</li><li>✅ 运用绝对值不等式解决公差判断问题</li></ul><div style="text-align:center;margin-top:16px;"><button class="btn btn-primary" onclick="switchTab(1)">开始学习 →</button></div>';
+    }
+    function renderTab1() {
+      contentArea.innerHTML = '<h2><span class="section-num">1</span> 绝对值回顾</h2><p>数 <strong>x</strong> 的绝对值记作 <span class="abs-bar">x</span>，表示数轴上点x到原点的距离。</p><div class="math-block"><span class="abs-bar">x</span> = x (x≥0)<br><span class="abs-bar">x</span> = -x (x<0)</div><div class="svg-illustration"><svg width="400" height="80" viewBox="0 0 400 80"><line x1="20" y1="40" x2="380" y2="40" stroke="#333" stroke-width="2"/><circle cx="200" cy="40" r="4" fill="#e74c3c"/><text x="200" y="20" text-anchor="middle" font-size="12">0</text><circle cx="280" cy="40" r="4" fill="#1a5e8a"/><text x="280" y="70" text-anchor="middle" font-size="12">x=3</text><circle cx="120" cy="40" r="4" fill="#e8831a"/><text x="120" y="70" text-anchor="middle" font-size="12">x=-3</text></svg></div><div style="text-align:center"><button class="btn btn-primary" onclick="switchTab(2)">下一节 →</button></div>';
+    }
+    function renderTab2() {
+      contentArea.innerHTML = '<h2><span class="section-num">2</span> |x| &lt; a 型</h2><div class="math-block highlight"><span class="abs-bar">x</span> &lt; a ⇔ -a &lt; x &lt; a</div><p>解集为开区间 (-a, a)</p><div class="svg-illustration"><svg width="400" height="70" viewBox="0 0 400 70"><line x1="20" y1="35" x2="380" y2="35" stroke="#333"/><circle cx="200" cy="35" r="3"/><rect x="100" y="29" width="200" height="12" fill="#2ecc71" opacity="0.5" rx="3"/><circle cx="100" cy="35" r="4" fill="#fff" stroke="#e74c3c"/><text x="100" y="60" text-anchor="middle" font-size="11">-a</text><circle cx="300" cy="35" r="4" fill="#fff" stroke="#e74c3c"/><text x="300" y="60" text-anchor="middle" font-size="11">a</text></svg></div><div style="text-align:center"><button class="btn btn-primary" onclick="switchTab(3)">下一节 →</button></div>';
+    }
+    function renderTab3() {
+      contentArea.innerHTML = '<h2><span class="section-num">3</span> |x| &gt; a 型</h2><div class="math-block highlight"><span class="abs-bar">x</span> &gt; a ⇔ x &lt; -a 或 x &gt; a</div><p>解集为 (-∞, -a) ∪ (a, +∞)</p><div class="svg-illustration"><svg width="400" height="70" viewBox="0 0 400 70"><line x1="20" y1="35" x2="380" y2="35" stroke="#333"/><circle cx="200" cy="35" r="3"/><rect x="20" y="29" width="80" height="12" fill="#e74c3c" opacity="0.45" rx="3"/><rect x="300" y="29" width="80" height="12" fill="#e74c3c" opacity="0.45" rx="3"/><circle cx="100" cy="35" r="4" fill="#fff" stroke="#e74c3c"/><text x="100" y="60" font-size="11">-a</text><circle cx="300" cy="35" r="4" fill="#fff" stroke="#e74c3c"/><text x="300" y="60" font-size="11">a</text></svg></div><div style="text-align:center"><button class="btn btn-accent" onclick="switchTab(4)">⚙️ 机械应用 →</button></div>';
+    }
+    function renderTab4() {
+      contentArea.innerHTML = '<h2><span class="section-num">4</span> ⚙️ 公差与绝对值</h2><div class="info-box mechanical"><span>📐</span><div>设计尺寸D，公差±t，合格尺寸d满足：<span class="math-inline">|d - D| ≤ t</span></div></div><h3>案例：轴径50±0.05mm</h3><div class="math-block highlight">|d - 50| ≤ 0.05 ⇔ 49.95 ≤ d ≤ 50.05</div><div class="simulator-box"><p>拖动滑块调整公差：</p><div class="slider-group">50 mm ± <input type="range" id="tolSlider" min="0.01" max="1.5" step="0.01" value="0.05" oninput="updateSimulator()"> <span class="slider-value" id="tolValue">0.05</span> mm</div><div class="math-block highlight" id="simMath">|d - 50| ≤ 0.05</div><p>合格范围：<strong id="simRange">49.95 ≤ d ≤ 50.05</strong></p><div id="simVisual"></div></div><div style="text-align:center"><button class="btn btn-primary" onclick="switchTab(5)">✏️ 综合练习 →</button></div>';
+      setTimeout(updateSimulator, 50);
+    }
+    function renderTab5() {
+      contentArea.innerHTML = '<h2><span class="section-num">5</span> ✏️ 综合练习</h2><div id="practiceContainer"></div><div style="text-align:center"><button class="btn btn-accent" onclick="switchTab(6)">🏆 自我测评 →</button></div>';
+      renderPracticeQuestions();
+    }
+    function renderTab6() {
+      state.quizSubmitted = false;
+      contentArea.innerHTML = '<h2><span class="section-num">6</span> 🏆 自我测评（100分）</h2><div id="quizContainer"></div><div style="text-align:center"><button class="btn btn-accent" id="quizSubmitBtn" onclick="submitQuiz()">📝 提交</button><button class="btn btn-outline" id="quizRetryBtn" onclick="resetQuiz()" style="display:none;">🔄 重测</button></div><div id="quizResult" style="text-align:center;margin-top:16px;"></div>';
+      renderQuizQuestions();
+    }
+
+    function renderPracticeQuestions() {
+      const container = document.getElementById('practiceContainer');
+      if (!container) return;
+      const questions = [
+        { id:'p1', q:'1. 不等式 |x| < 7 的解集是？', opts:['x < 7','x > -7','-7 < x < 7','x < -7 或 x > 7'], cor:2, exp:'|x| < 7 ⇔ -7 < x < 7' },
+        { id:'p2', q:'2. 不等式 |x-2| ≤ 3 的解集是？', opts:['-1 ≤ x ≤ 5','x ≤ 5','-3 ≤ x ≤ 3','x ≤ -1 或 x ≥ 5'], cor:0, exp:'|x-2| ≤ 3 ⇔ -3 ≤ x-2 ≤ 3 ⇔ -1 ≤ x ≤ 5' },
+        { id:'p3', q:'3. 尺寸40±0.03mm用绝对值不等式表示为？', opts:['|d-40| < 0.03','|d-40| ≤ 0.03','|d| ≤ 40.03','|d-0.03| ≤ 40'], cor:1, exp:'公差±0.03即|d-40| ≤ 0.03' },
+        { id:'p4', q:'4. 不等式 |x| > 6 的解集是？', opts:['x > 6','-6 < x < 6','x > 6 或 x < -6','x ≥ 6'], cor:2, exp:'|x| > 6 ⇔ x < -6 或 x > 6' },
+        { id:'p5', q:'5. 轴径满足 |d-25| ≤ 0.04，上限是多少？', type:'input', ans:'25.04', exp:'|d-25| ≤ 0.04 ⇔ 24.96 ≤ d ≤ 25.04，上限25.04' }
+      ];
+      let html = '';
+      questions.forEach(q => {
+        html += `<div class="practice-item" id="practice-${q.id}"><div class="question">${q.q}</div>`;
+        if (q.type === 'input') {
+          html += `<input class="input-answer" id="input-${q.id}" placeholder="答案"><button class="submit-btn" onclick="handleInputSubmit('${q.id}')">提交</button>`;
+        } else {
+          html += '<div class="options">';
+          q.opts.forEach((opt, oi) => {
+            html += `<button class="option-btn" data-qid="${q.id}" data-oidx="${oi}" data-correct="${q.cor}" data-exp="${q.exp}" onclick="handleChoiceClick(this)">${opt}</button>`;
+          });
+          html += '</div>';
+        }
+        html += `<div class="feedback-msg" id="feedback-${q.id}"></div></div>`;
+      });
+      container.innerHTML = html;
+    }
+
+    window.handleChoiceClick = function(btn) {
+      const qid = btn.dataset.qid;
+      const chosenIdx = parseInt(btn.dataset.oidx);
+      const correctIdx = parseInt(btn.dataset.correct);
+      const exp = btn.dataset.exp;
+      const item = document.getElementById('practice-' + qid);
+      const fb = document.getElementById('feedback-' + qid);
+      if (!item || !fb || item.classList.contains('correct') || item.classList.contains('wrong')) return;
+      const allBtns = item.querySelectorAll('.option-btn');
+      allBtns.forEach(b => b.classList.remove('selected'));
+      if (chosenIdx === correctIdx) {
+        btn.classList.add('correct-answer');
+        item.classList.add('correct');
+        fb.className = 'feedback-msg show correct';
+        fb.textContent = '✅ 正确！' + exp;
+        markTabCompleted(5);
+      } else {
+        btn.classList.add('wrong-answer');
+        item.classList.add('wrong');
+        allBtns[correctIdx].classList.add('correct-answer');
+        fb.className = 'feedback-msg show wrong';
+        fb.textContent = '❌ 错误！' + exp;
+      }
+      allBtns.forEach(b => { b.disabled = true; b.style.pointerEvents = 'none'; });
+    };
+
+    window.handleInputSubmit = function(qid) {
+      const item = document.getElementById('practice-' + qid);
+      const fb = document.getElementById('feedback-' + qid);
+      const input = document.getElementById('input-' + qid);
+      if (!item || !fb || !input || item.classList.contains('correct') || item.classList.contains('wrong')) return;
+      const ansMap = { p5: '25.04' };
+      const expMap = { p5: '|d-25| ≤ 0.04 ⇔ 24.96 ≤ d ≤ 25.04，上限25.04' };
+      const correct = ansMap[qid] || '';
+      const userAns = input.value.trim();
+      const isCorrect = (parseFloat(userAns) === parseFloat(correct)) || (userAns === correct);
+      if (isCorrect) {
+        item.classList.add('correct');
+        fb.className = 'feedback-msg show correct';
+        fb.textContent = '✅ 正确！' + (expMap[qid]||'');
+        markTabCompleted(5);
+      } else {
+        item.classList.add('wrong');
+        fb.className = 'feedback-msg show wrong';
+        fb.textContent = '❌ 错误！答案是 ' + correct + '。' + (expMap[qid]||'');
+      }
+      input.disabled = true;
+      const btn = item.querySelector('.submit-btn');
+      if (btn) btn.disabled = true;
+    };
+
+    function renderQuizQuestions() {
+      const container = document.getElementById('quizContainer');
+      if (!container) return;
+      const quiz = [
+        { id:'q1', q:'1. |x| ≤ 8 的解集区间是？', opts:['(-8,8)','[-8,8]','(-∞,-8)∪(8,∞)','[-8,8)'], cor:1 },
+        { id:'q2', q:'2. |x+3| < 2 的解集是？', opts:['-5 < x < -1','1 < x < 5','-1 < x < 5','x < -5 或 x > -1'], cor:0 },
+        { id:'q3', q:'3. 孔径20±0.02mm，合格尺寸d满足？', opts:['|d-20| < 0.02','|d-20| ≤ 0.02','|d-20| ≥ 0.02','|d| ≤ 20.02'], cor:1 },
+        { id:'q4', q:'4. |2x-4| ≤ 6 的解集是？', opts:['-1 ≤ x ≤ 5','-5 ≤ x ≤ 1','x ≤ -1 或 x ≥ 5','-3 ≤ x ≤ 7'], cor:0 },
+        { id:'q5', q:'5. |d-15| > 0.1，则d范围是？', opts:['14.9 < d < 15.1','d < 14.9 或 d > 15.1','d ≤ 14.9 或 d ≥ 15.1','14.9 ≤ d ≤ 15.1'], cor:1 }
+      ];
+      let html = '';
+      quiz.forEach(q => {
+        html += `<div class="practice-item" id="quiz-${q.id}"><div class="question">${q.q}</div><div class="options">`;
+        q.opts.forEach((opt, oi) => {
+          html += `<button class="option-btn quiz-option" data-qid="${q.id}" data-oidx="${oi}" onclick="handleQuizClick(this)">${opt}</button>`;
+        });
+        html += `</div><div class="feedback-msg" id="quiz-feedback-${q.id}"></div></div>`;
+      });
+      container.innerHTML = html;
+    }
+
+    const quizSelections = {};
+    window.handleQuizClick = function(btn) {
+      if (state.quizSubmitted) return;
+      const qid = btn.dataset.qid;
+      const oidx = parseInt(btn.dataset.oidx);
+      const item = document.getElementById('quiz-' + qid);
+      if (!item) return;
+      item.querySelectorAll('.quiz-option').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      quizSelections[qid] = oidx;
+    };
+    window.submitQuiz = function() {
+      if (state.quizSubmitted) return;
+      const key = { q1:1, q2:0, q3:1, q4:0, q5:1 };
+      let score = 0;
+      Object.keys(key).forEach(id => {
+        const item = document.getElementById('quiz-' + id);
+        const fb = document.getElementById('quiz-feedback-' + id);
+        const allBtns = item ? item.querySelectorAll('.quiz-option') : [];
+        const user = quizSelections[id];
+        const correct = key[id];
+        if (user === correct) {
+          score += 20;
+          if (item) item.classList.add('correct');
+          if (fb) { fb.className = 'feedback-msg show correct'; fb.textContent = '✅'; }
+          if (allBtns[correct]) allBtns[correct].classList.add('correct-answer');
+        } else {
+          if (item) item.classList.add('wrong');
+          if (fb) { fb.className = 'feedback-msg show wrong'; fb.textContent = '❌'; }
+          if (allBtns[correct]) allBtns[correct].classList.add('correct-answer');
+          if (user !== undefined && allBtns[user]) allBtns[user].classList.add('wrong-answer');
+        }
+        allBtns.forEach(b => { b.disabled = true; b.style.pointerEvents = 'none'; });
+      });
+      state.quizSubmitted = true;
+      document.getElementById('quizSubmitBtn').style.display = 'none';
+      document.getElementById('quizRetryBtn').style.display = 'inline-flex';
+      let emoji = score>=90?'🌟':score>=70?'👍':score>=60?'📚':'💪';
+      let text = score>=90?'优秀':score>=70?'良好':score>=60?'及格':'需加强';
+      document.getElementById('quizResult').innerHTML = `<div class="score-summary"><div class="score-card"><div class="score-num">${score}</div><div>得分</div></div><div class="score-card"><div class="score-num">${score/20}/5</div><div>正确题数</div></div></div><p style="font-size:1.2rem;font-weight:700;">${emoji} ${text}</p>`;
+      if (score >= 60) markTabCompleted(6);
+    };
+    window.resetQuiz = function() {
+      state.quizSubmitted = false;
+      for (let k in quizSelections) delete quizSelections[k];
+      renderTab6();
+    };
+    window.updateSimulator = function() {
+      const slider = document.getElementById('tolSlider');
+      const tolVal = document.getElementById('tolValue');
+      const simMath = document.getElementById('simMath');
+      const simRange = document.getElementById('simRange');
+      const simVisual = document.getElementById('simVisual');
+      if (!slider) return;
+      const tol = parseFloat(slider.value);
+      tolVal.textContent = tol.toFixed(2);
+      if (simMath) simMath.innerHTML = '<span class="abs-bar">d - 50</span> ≤ ' + tol.toFixed(2);
+      const low = (50 - tol).toFixed(2);
+      const high = (50 + tol).toFixed(2);
+      if (simRange) simRange.textContent = low + ' ≤ d ≤ ' + high;
+      if (simVisual) {
+        const designX = 180, pxPerMM = 260, tolPx = tol * pxPerMM;
+        const greenStart = Math.max(20, designX - tolPx);
+        const greenWidth = Math.min(360, tolPx * 2);
+        simVisual.innerHTML = `<svg width="400" height="60" viewBox="0 0 400 60"><line x1="20" y1="30" x2="380" y2="30" stroke="#333" stroke-width="2"/><rect x="${greenStart}" y="24" width="${greenWidth}" height="12" fill="#2ecc71" opacity="0.6" rx="3"/><line x1="${designX}" y1="18" x2="${designX}" y2="42" stroke="#333" stroke-width="2"/><text x="${designX}" y="14" text-anchor="middle" font-size="10">50</text><text x="${Math.max(25, greenStart-5)}" y="55" text-anchor="middle" font-size="9" fill="#c0392b">${low}</text><text x="${Math.min(375, greenStart+greenWidth+5)}" y="55" text-anchor="middle" font-size="9" fill="#c0392b">${high}</text></svg>`;
+      }
+    };
+
+    allTabBtns.forEach(btn => btn.addEventListener('click', function() {
+      switchTab(parseInt(this.dataset.tab));
+    }));
+    window.switchTab = switchTab;
+    renderContent(0);
+    markTabCompleted(0);
+    updateGlobalProgress();
+    if (document.readyState === 'complete') updateSimulator();
+    else window.addEventListener('load', updateSimulator);
+  })();
+</script>
+</body>
+</html>
